@@ -43,6 +43,7 @@ class tx_css2inline_pi1 extends tslib_pibase {
 	var $scriptRelPath = 'pi1/class.tx_css2inline_pi1.php';	// Path to this script relative to the extension dir.
 	var $extKey        = 'css2inline';	// The extension key.
 	var $pi_checkCHash = true;
+	var $encoding = ''; 
 
 	private $html = '';
 	private $css = '';
@@ -58,9 +59,11 @@ class tx_css2inline_pi1 extends tslib_pibase {
 	function main($content, $conf)	{
 		$css = $this->cObj->cObjGet($conf['css.']);
 		$html = $this->cObj->cObjGet($conf['html.']);
+		$charset = $GLOBALS['TSFE']->config['config']['renderCharset'];
+		$this->encoding = $charset?$charset:'iso-8859-1';
 		$this->setCSS($css);
 		$this->setHTML($html);
-		return $this->emogrify();
+		return html_entity_decode($this->emogrify(),ENT_QUOTES,$this->encoding);
 	}
 	/*
 	 *
@@ -96,10 +99,11 @@ class tx_css2inline_pi1 extends tslib_pibase {
 		// process the CSS here, turning the CSS style blocks into inline css
 		$unprocessableHTMLTags = implode('|',$this->unprocessableHTMLTags);
 		$body = preg_replace("/<($unprocessableHTMLTags)[^>]*>/i",'',$this->html);
-
+		
 		$xmldoc = new DOMDocument();
 		$xmldoc->strictErrorChecking = false;
 		$xmldoc->formatOutput = true;
+		$xmldoc->encoding = $this->encoding;
 		$xmldoc->loadHTML($body);
 		$xmldoc->normalizeDocument();
 

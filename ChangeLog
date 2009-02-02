@@ -1,3 +1,9 @@
 2009-01-26 Olivier Schopfer  <ops@wcc-coe.org>
 
 	* initial code generated with kickstarter
+
+	* 0.0.3 
+		fixed documentation
+
+	* 0.1.0 
+		fixed encoding including utf-8

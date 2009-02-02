@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "css2inline"
 #
-# Auto generated 27-01-2009 09:35
+# Auto generated 02-02-2009 10:45
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -29,7 +29,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
 	'author_company' => '',
-	'version' => '0.0.3',
+	'version' => '0.1.0',
 	'constraints' => array(
 		'depends' => array(
 		),
@@ -38,7 +38,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:8:{s:9:"ChangeLog";s:4:"d6f0";s:10:"README.txt";s:4:"ee2d";s:12:"ext_icon.gif";s:4:"ef6a";s:17:"ext_localconf.php";s:4:"3601";s:14:"doc/manual.sxw";s:4:"689a";s:19:"doc/wizard_form.dat";s:4:"3ca4";s:20:"doc/wizard_form.html";s:4:"9b71";s:31:"pi1/class.tx_css2inline_pi1.php";s:4:"4c92";}',
+	'_md5_values_when_last_written' => 'a:8:{s:9:"ChangeLog";s:4:"5eab";s:10:"README.txt";s:4:"ee2d";s:12:"ext_icon.gif";s:4:"ef6a";s:17:"ext_localconf.php";s:4:"3601";s:14:"doc/manual.sxw";s:4:"9c9a";s:19:"doc/wizard_form.dat";s:4:"3ca4";s:20:"doc/wizard_form.html";s:4:"9b71";s:31:"pi1/class.tx_css2inline_pi1.php";s:4:"27d2";}',
 	'suggests' => array(
 	),
 );
