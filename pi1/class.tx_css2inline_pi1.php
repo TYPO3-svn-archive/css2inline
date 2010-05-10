@@ -43,7 +43,7 @@ class tx_css2inline_pi1 extends tslib_pibase {
 	var $scriptRelPath = 'pi1/class.tx_css2inline_pi1.php';	// Path to this script relative to the extension dir.
 	var $extKey        = 'css2inline';	// The extension key.
 	var $pi_checkCHash = true;
-	var $encoding = ''; 
+	var $encoding = '';
 
 	private $html = '';
 	private $css = '';
@@ -63,16 +63,17 @@ class tx_css2inline_pi1 extends tslib_pibase {
 		$this->encoding = $charset?$charset:'iso-8859-1';
 		$this->setCSS($css);
 		$this->setHTML($html);
+		if ($conf['removeAttributes']) $this->removeAttributes = t3lib_div::trimExplode(',', $conf['removeAttributes']);
 		return html_entity_decode($this->emogrify(),ENT_QUOTES,$this->encoding);
 	}
 	/*
 	 *
 	 * Library taken from http://www.pelagodesign.com/sidecar/emogrifier/
-	 UPDATES
+	UPDATES
 
-	 2008-08-10  Fixed CSS comment stripping regex to add PCRE_DOTALL (changed from '/\/\*.*\*\//U' to '/\/\*.*\*\//sU')
-	 2008-08-18  Added lines instructing DOMDocument to attempt to normalize HTML before processing
-	 2008-10-20  Fixed bug with bad variable name... Thanks Thomas!
+	2008-08-10  Fixed CSS comment stripping regex to add PCRE_DOTALL (changed from '/\/\*.*\*\//U' to '/\/\*.*\*\//sU')
+	2008-08-18  Added lines instructing DOMDocument to attempt to normalize HTML before processing
+	2008-10-20  Fixed bug with bad variable name... Thanks Thomas!
 
 	 */
 	// you can extend this to support file input/output or just add new functions to this class!
@@ -99,7 +100,7 @@ class tx_css2inline_pi1 extends tslib_pibase {
 		// process the CSS here, turning the CSS style blocks into inline css
 		$unprocessableHTMLTags = implode('|',$this->unprocessableHTMLTags);
 		$body = preg_replace("/<($unprocessableHTMLTags)[^>]*>/i",'',$this->html);
-		
+
 		$xmldoc = new DOMDocument();
 		$xmldoc->strictErrorChecking = false;
 		$xmldoc->formatOutput = true;
@@ -152,8 +153,15 @@ class tx_css2inline_pi1 extends tslib_pibase {
 		}
 
 		// This removes styles from your email that contain display:none;. You could comment these out if you want.
-		$nodes = $xpath->query('//*[contains(translate(@style," ",""),"display:none;")]');
+		// $nodes = $xpath->query('//*[contains(translate(@style," ",""),"display:none;")]');
 		foreach ($nodes as $node) $node->parentNode->removeChild($node);
+		if ($this->removeAttributes) {
+			foreach ($this->removeAttributes as $attribute) {
+				$nodes = $xpath->query("//*[@" . $attribute . "]");
+				foreach ($nodes as $node) $node->removeAttribute($attribute);
+			}
+		}
+
 
 		return $xmldoc->saveHTML();
 
@@ -164,18 +172,18 @@ class tx_css2inline_pi1 extends tslib_pibase {
 	private function translateCSStoXpath($css_selector) {
 		// returns an Xpath selector
 		$search = array(
-	                       '/\s+>\s+/', // Matches any F element that is a child of an element E.
-	                       '/(\w+)\s+\+\s+(\w+)/', // Matches any F element that is a child of an element E.
-	                       '/\s+/', // Matches any F element that is a descendant of an E element.
-	                       '/(\w+)?\#([\w\-]+)/e', // Matches id attributes
-	                       '/(\w+)?\.([\w\-]+)/e', // Matches class attributes
+												 '/\s+>\s+/', // Matches any F element that is a child of an element E.
+												 '/(\w+)\s+\+\s+(\w+)/', // Matches any F element that is a child of an element E.
+												 '/\s+/', // Matches any F element that is a descendant of an E element.
+												 '/(\w+)?\#([\w\-]+)/e', // Matches id attributes
+												 '/(\w+)?\.([\w\-]+)/e', // Matches class attributes
 		);
 		$replace = array(
-	                       '/',
-	                       '\\1/following-sibling::*[1]/self::\\2',
-	                       '//',
-	                       "(strlen('\\1') ? '\\1' : '*').'[@id=\"\\2\"]'",
-	                       "(strlen('\\1') ? '\\1' : '*').'[contains(concat(\" \",@class,\" \"),concat(\" \",\"\\2\",\" \"))]'",
+												 '/',
+												 '\\1/following-sibling::*[1]/self::\\2',
+												 '//',
+												 "(strlen('\\1') ? '\\1' : '*').'[@id=\"\\2\"]'",
+												 "(strlen('\\1') ? '\\1' : '*').'[contains(concat(\" \",@class,\" \"),concat(\" \",\"\\2\",\" \"))]'",
 		);
 		return '//'.preg_replace($search,$replace,trim($css_selector));
 	}
@@ -184,8 +192,8 @@ class tx_css2inline_pi1 extends tslib_pibase {
 		$definitions = explode(';',$style);
 		$retArr = array();
 		foreach ($definitions as $def) {
-			list($key,$value) = explode(':',$def);
-			if (empty($key) || empty($value)) continue;
+			list($key, $value) = preg_split('/:/', $def, 2, PREG_SPLIT_NO_EMPTY);
+			if (empty($key) || !isset($value)) continue;
 			$retArr[trim($key)] = trim($value);
 		}
 		return $retArr;
