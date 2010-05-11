@@ -154,7 +154,7 @@ class tx_css2inline_pi1 extends tslib_pibase {
 
 		// This removes styles from your email that contain display:none;. You could comment these out if you want.
 		// $nodes = $xpath->query('//*[contains(translate(@style," ",""),"display:none;")]');
-		foreach ($nodes as $node) $node->parentNode->removeChild($node);
+		// foreach ($nodes as $node) $node->parentNode->removeChild($node);
 		if ($this->removeAttributes) {
 			foreach ($this->removeAttributes as $attribute) {
 				$nodes = $xpath->query("//*[@" . $attribute . "]");
@@ -172,18 +172,18 @@ class tx_css2inline_pi1 extends tslib_pibase {
 	private function translateCSStoXpath($css_selector) {
 		// returns an Xpath selector
 		$search = array(
-												 '/\s+>\s+/', // Matches any F element that is a child of an element E.
-												 '/(\w+)\s+\+\s+(\w+)/', // Matches any F element that is a child of an element E.
-												 '/\s+/', // Matches any F element that is a descendant of an E element.
-												 '/(\w+)?\#([\w\-]+)/e', // Matches id attributes
-												 '/(\w+)?\.([\w\-]+)/e', // Matches class attributes
+												'/\s+>\s+/', // Matches any F element that is a child of an element E.
+												'/(\w+)\s+\+\s+(\w+)/', // Matches any F element that is a child of an element E.
+												'/\s+/', // Matches any F element that is a descendant of an E element.
+												'/(\w+)?\#([\w\-]+)/e', // Matches id attributes
+												'/(\w+)?\.([\w\-]+)/e', // Matches class attributes
 		);
 		$replace = array(
-												 '/',
-												 '\\1/following-sibling::*[1]/self::\\2',
-												 '//',
-												 "(strlen('\\1') ? '\\1' : '*').'[@id=\"\\2\"]'",
-												 "(strlen('\\1') ? '\\1' : '*').'[contains(concat(\" \",@class,\" \"),concat(\" \",\"\\2\",\" \"))]'",
+												'/',
+												'\\1/following-sibling::*[1]/self::\\2',
+												'//',
+												"(strlen('\\1') ? '\\1' : '*').'[@id=\"\\2\"]'",
+												"(strlen('\\1') ? '\\1' : '*').'[contains(concat(\" \",@class,\" \"),concat(\" \",\"\\2\",\" \"))]'",
 		);
 		return '//'.preg_replace($search,$replace,trim($css_selector));
 	}
